@@ -1,10 +1,10 @@
-##Simple rest api
-###Implement next futures:
+## Simple rest api
+### Implement next futures:
 * user login/register
 * product creating
 * unique product id for product 
 * adding prices to each product
-* product list pagination 
+* product list pagination
 <br><br>
 * filtering and sorting products by:
   * article 
@@ -15,6 +15,8 @@
 * Percona MySQL 8.0.23
 * Python 3.6
 * Flask 2.0.2
+* SQLAlchemy 1.4.26
+
 
 `pip3 install -r requirements.txt`
 
