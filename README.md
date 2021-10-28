@@ -1,5 +1,5 @@
-##Simple rest api
-###Implement next futures:
+## Simple rest api
+### Implement next futures:
 * user login/register
 * product creating
 * unique product id for product 
