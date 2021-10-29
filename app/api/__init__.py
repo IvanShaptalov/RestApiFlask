@@ -1,4 +1,3 @@
 from . import products
-from . import users
-from . import authorization
+from . import auth
 from . import currency

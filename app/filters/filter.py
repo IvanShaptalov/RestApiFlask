@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import request, jsonify
+from flask import request, make_response
 import re
 
 import config.validation_config
@@ -18,8 +18,8 @@ def data_exists(key_list: list):
             data = request.get_json()
             for key in key_list:
                 if key not in data:
-                    return jsonify(
-                        {'bad request': 400, 'Arguments missed': 'expected some of arguments, but not given'})
+                    return make_response('bad request', 400,
+                                         {'Arguments missed': 'expected some of arguments, but not given'})
             return func(*args, **kwargs)
 
         return wrapper
