@@ -1,4 +1,4 @@
-from app.models.db_util import db_obj
+from app.models.db_util import db_control
 from config import run_config
 from app.models import db_util
 
