@@ -16,10 +16,10 @@ def token_required(func):
         if not token:
             return jsonify({'message': 'a valid token is missing'})
         try:
-            data = jwt.decode(token, app.config['SECRET_KEY'])
-            current_user = User.query.filter_by(public_id=data['public_id']).first()
+            payload = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+            current_user = User.query.filter_by(public_id=payload['public_id']).first()
         except Exception as e:
             print(type(e), e)
-            return jsonify({'message': 'token is invalid'})
+            return jsonify({'message': 'token is invalid or expired'})
         return func(current_user, *args, **kwargs)
     return decorator

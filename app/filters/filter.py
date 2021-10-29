@@ -3,7 +3,6 @@ from flask import request, jsonify
 import re
 
 import config.validation_config
-from app.models.db_util import User
 
 
 def data_exists(key_list: list):
@@ -15,12 +14,13 @@ def data_exists(key_list: list):
     def decorator(func):
 
         @wraps(func)
-        def wrapper():
+        def wrapper(*args, **kwargs):
             data = request.get_json()
             for key in key_list:
                 if key not in data:
-                    return jsonify({'bad request': 400, 'Arguments missed': 'name or password required'})
-            return func()
+                    return jsonify(
+                        {'bad request': 400, 'Arguments missed': 'expected some of arguments, but not given'})
+            return func(*args, **kwargs)
 
         return wrapper
 
@@ -33,7 +33,7 @@ def check_password_validity(password) -> bool:
     password min length = 8;
 
     :param password: value to check validity
-    :return:
+    :return: True if password valid
     """
     if re.fullmatch(config.validation_config.PASSWORD_PATTERN, password):
         return True
@@ -44,14 +44,29 @@ def check_password_validity(password) -> bool:
 # no match
 
 
-def check_user_unique(username):
+def check_unique_value_in_table(model, identifier_to_value: list):
+    """
+    check unique in table
+    :param model: sqlalchemy model,
+    :param identifier_to_value: instrumented attribute to value, example [User.id == 5, User.name = 'abc']
+    :return: True if object exists in table
+    """
     # if username empty
+    obj = model.query.filter(*identifier_to_value).first()
+    return obj is not None
 
-    return not (isinstance(User.query.filter_by(username=username).first(), User))
 
-
-def check_args_length(*args, min_len):
+def check_args_length(*args, min_len, max_len):
+    """
+    :param args: values to validation
+    :param min_len: min len
+    :param max_len: max len
+    :return: True if argument is valid
+    """
     for arg in args:
+        if max_len:
+            if len(arg) > max_len:
+                return False
         if len(arg) < min_len:
             return False
     return True
