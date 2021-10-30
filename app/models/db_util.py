@@ -1,11 +1,12 @@
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import scoped_session, sessionmaker
-
 import config.validation_config
-from config.run_config import app
+from config.run_config import db_control, scoped_session
 
-db_control = SQLAlchemy(app)
-sc_session = scoped_session(sessionmaker(bind=db_control.engine))
+sc_session = scoped_session
+
+
+def create_all():
+    db_control.create_all()
+    print('db created')
 # test database
 
 
@@ -38,7 +39,5 @@ class Price(db_control.Model):
     product_id = db_control.Column(db_control.Integer, db_control.ForeignKey('product.id'))
 
 
-def create_all():
-    db_control.create_all()
-    print('db created')
+create_all()
 # endregion

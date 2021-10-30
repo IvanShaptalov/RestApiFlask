@@ -1,28 +1,13 @@
-import pytest
+import json
 
-# from filters.filters import user_in_chat
-from config import config
-
-
-@pytest.mark.config
-def test_config_valid():
-    assert config.BASE_DIR
-    assert config.CONFIG_PATH
-    assert config.MEDIA_PATH
-    assert config.DB_PATH
-    assert config.DB_DRIVER
-    assert config.DB_NAME
-    assert config.SECRET_KEY
-    assert config.DATABASE_URL
-    assert config.JW_TOKEN_MINUTES_LIVE
+import config.routes
+from tests.conftest import BaseTestCase
 
 
-@pytest.mark.internet
-def test_internet_connection():
-    import requests
-    google = 'https://www.google.com/'
-    try:
-        requests.get(google)
-    except Exception as e:
-        print(e)
-        assert False, 'check internet connection'
+class ConfigTestCase(BaseTestCase):
+    def test_registration_get_valid(self):
+        app = self.create_app()
+
+        response = app.test_client().post(config.routes.REGISTER, json=dict(name='ivan', password='dafsjkd111'))
+        print(response)
+        assert (response.status_code == 200)

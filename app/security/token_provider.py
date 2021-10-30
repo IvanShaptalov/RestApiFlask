@@ -23,3 +23,5 @@ def token_required(func):
             return jsonify({'message': 'token is invalid or expired'})
         return func(current_user, *args, **kwargs)
     return decorator
+
+

@@ -9,7 +9,7 @@ import datetime
 from app.filters import filter
 
 
-@app.route('/register', methods=['GET', 'POST'])
+@app.route(config.routes.REGISTER, methods=['POST'])
 @filter.data_exists(key_list=['name', 'password'])
 def signup_user():
     data = request.get_json()
@@ -40,7 +40,7 @@ def signup_user():
                          {'WWW.Authentication': 'register successful'})
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route(config.routes.LOGIN, methods=['POST'])
 def login_user():
     auth = request.authorization
     # region filtering

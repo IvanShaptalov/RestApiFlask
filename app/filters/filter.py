@@ -15,11 +15,16 @@ def data_exists(key_list: list):
 
         @wraps(func)
         def wrapper(*args, **kwargs):
+            def bad_request():
+                return make_response('bad request', 400,
+                                     {'Arguments missed': 'expected some of arguments, but not given'})
+
             data = request.get_json()
+            if data is None:
+                return bad_request()
             for key in key_list:
                 if key not in data:
-                    return make_response('bad request', 400,
-                                         {'Arguments missed': 'expected some of arguments, but not given'})
+                    return bad_request()
             return func(*args, **kwargs)
 
         return wrapper
