@@ -9,12 +9,14 @@ from flask import current_app, g
 
 Base = models.Base
 sc_session = None
+engine = None
 
 
 # region initialization
 def get_db() -> DeclarativeMeta:
     global Base
     global sc_session
+    global engine
     """Connect to the application's configured database. The connection
     is unique for each request and will be reused if this is called
     again.
@@ -31,6 +33,7 @@ def get_db() -> DeclarativeMeta:
 
 def init_db():
     global sc_session
+    global engine
     base, engine, sc_session = get_db()
     g.db = sc_session
 
