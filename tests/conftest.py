@@ -1,5 +1,5 @@
-import json
 import logging
+from base64 import b64encode
 
 import pytest
 
@@ -30,6 +30,17 @@ def client(app):
 def registration_data():
     return dict(name="ivan_test",
                 password="testdskjf8243u209hf2")
+
+
+def login_headers(missed_username=False, missed_password=False):
+    username, password = "ivan_test", "testdskjf8243u209hf2"
+    if missed_username:
+        username = ""
+    if missed_password:
+        password = ""
+    encoded_credentials = b64encode(bytes(f'{username}:{password}',
+                                          encoding='ascii')).decode('ascii')
+    return {'Authorization': f'Basic {encoded_credentials}'}
 
 
 @pytest.fixture

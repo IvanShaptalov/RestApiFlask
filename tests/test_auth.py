@@ -1,7 +1,13 @@
 import pytest
+from werkzeug.datastructures import Authorization
+from base64 import b64encode
 
 from config import routes
 
+from tests.conftest import login_headers
+
+
+# region index test
 
 @pytest.mark.auth
 def test_index_html(client):
@@ -9,6 +15,9 @@ def test_index_html(client):
     assert response.status_code == 200, "index don`t work correctly"
 
 
+# endregion index test
+
+# region registration tests
 @pytest.mark.auth
 def test_registration_valid(client, registration_data, delete_aliases_caller):
     """test registration in valid case, expected 201"""
@@ -68,6 +77,7 @@ def test_registration_password_weak(client, r_data_pass_weak, delete_aliases_cal
         delete_aliases_caller()
 
 
+@pytest.mark.auth
 def test_name_invalid(client, r_data_name_invalid, delete_aliases_caller):
     try:
 
@@ -77,3 +87,56 @@ def test_name_invalid(client, r_data_name_invalid, delete_aliases_caller):
             print(f'case #{index} ok')
     finally:
         delete_aliases_caller()
+
+
+# endregion registration tests
+
+# region login tests
+@pytest.mark.auth
+def test_login(client, registration_data, delete_aliases_caller):
+    try:
+        # create user
+        response = client.post(routes.AUTH_PREFIX + routes.REGISTER, json=registration_data)
+        if len(response.headers) > 0:
+            print(response.headers[0])
+        assert response.status_code == 201, "expected 201, user creating"
+
+        response = client.post(routes.AUTH_PREFIX + routes.LOGIN, headers=login_headers())
+        print(response)
+        assert response.status_code == 200, "login don't work correctly"
+    finally:
+        delete_aliases_caller()
+
+
+@pytest.mark.auth
+def test_login_missed_username(client, registration_data, delete_aliases_caller):
+    try:
+        # create user
+        response = client.post(routes.AUTH_PREFIX + routes.REGISTER, json=registration_data)
+        if len(response.headers) > 0:
+            print(response.headers[0])
+        assert response.status_code == 201, "expected 201, user creating"
+
+        response = client.post(routes.AUTH_PREFIX + routes.LOGIN, headers=login_headers(missed_username=True))
+        print(response)
+        assert response.status_code == 401, "username filter not work"
+    finally:
+        delete_aliases_caller()
+
+
+@pytest.mark.auth
+def test_login_missed_password(client, registration_data, delete_aliases_caller):
+    try:
+        # create user
+        response = client.post(routes.AUTH_PREFIX + routes.REGISTER, json=registration_data)
+        if len(response.headers) > 0:
+            print(response.headers[0])
+        assert response.status_code == 201, "expected 201, user creating"
+
+        response = client.post(routes.AUTH_PREFIX + routes.LOGIN, headers=login_headers(missed_password=True))
+        print(response)
+        assert response.status_code == 401, "username filter not work"
+    finally:
+        delete_aliases_caller()
+
+# endregion login tests
