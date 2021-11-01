@@ -1,9 +1,5 @@
 import pytest
-from werkzeug.datastructures import Authorization
-from base64 import b64encode
-
 from config import routes
-
 from tests.conftest import login_headers
 
 

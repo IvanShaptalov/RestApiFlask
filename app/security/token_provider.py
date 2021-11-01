@@ -3,7 +3,7 @@ import jwt
 from functools import wraps
 
 from app import models
-from app.models import User, db_util
+from app.models import db_util
 
 
 def token_required(func):
