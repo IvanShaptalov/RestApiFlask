@@ -15,9 +15,11 @@ bp = Blueprint('register', __name__, url_prefix='/auth')
 @filter.data_exists(key_list=['name', 'password'])
 def signup_user():
     data = request.get_json()
+
     # region filtering
     min_l = config.validation_config.MIN_NAME_LENGTH
     max_l = config.validation_config.MAX_NAME_LENGTH
+
     if not filter.check_args_length(data['name'], min_len=min_l, max_len=max_l):
         return make_response('bad request', 400,
                              {'Validation error': f'username at least {min_l} characters'})

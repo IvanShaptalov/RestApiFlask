@@ -1,3 +1,4 @@
+import json
 from functools import wraps
 from flask import request, make_response
 import re
@@ -15,16 +16,18 @@ def data_exists(key_list: list):
 
         @wraps(func)
         def wrapper(*args, **kwargs):
-            def bad_request():
+            def bad_request(error, desc):
                 return make_response('bad request', 400,
-                                     {'Arguments missed': 'expected some of arguments, but not given'})
+                                     {error: desc})
 
+            # get json
             data = request.get_json()
-            if data is None:
-                return bad_request()
+            # check if json is dictionary
+            if not isinstance(data, dict):
+                return bad_request(error='Json warning', desc=f'expected dictionary from json, given: {type(data)}')
             for key in key_list:
                 if key not in data:
-                    return bad_request()
+                    return bad_request(error='Arguments missed', desc='expected some of arguments, but not given')
             return func(*args, **kwargs)
 
         return wrapper
