@@ -46,21 +46,6 @@ def check_password_validity(password) -> bool:
         return False
 
 
-# no match
-
-
-def check_unique_value_in_table(model, identifier_to_value: list):
-    """
-    check unique in table
-    :param model: sqlalchemy model,
-    :param identifier_to_value: instrumented attribute to value, example [User.id == 5, User.name = 'abc']
-    :return: True if object exists in table
-    """
-    # if username empty
-    obj = model.query.filter(*identifier_to_value).first()
-    return obj is not None
-
-
 def check_args_length(*args, min_len, max_len):
     """
     :param args: values to validation

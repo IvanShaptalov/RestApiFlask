@@ -1,32 +1,35 @@
-from unittest import TestCase
-
-from config import config
-from tests.conftest import BaseTestCase
+import pytest
 
 
-class ConfigTestCase(TestCase):
-    def test_configuration(self):
-        self.assertIsNotNone(config.BASE_DIR)
-        self.assertIsNotNone(config.CONFIG_PATH)
-        self.assertIsNotNone(config.MEDIA_PATH)
-        self.assertIsNotNone(config.DB_PATH)
-        self.assertIsNotNone(config.DB_DRIVER)
-        self.assertIsNotNone(config.DB_NAME)
-        self.assertIsNotNone(config.SECRET_KEY)
-        self.assertIsNotNone(config.DATABASE_URL)
-        self.assertIsNotNone(config.JW_TOKEN_MINUTES_LIVE)
-        self.assertIsNotNone(config.DATABASE_TEST_URL)
-        self.assertIsNotNone(config.DB_TEST_NAME)
-        self.assertNotEqual(config.DATABASE_TEST_URL, config.DATABASE_URL, "test database must have another path")
+@pytest.mark.config
+def test_configuration():
+    from config import config
+    assert config.BASE_DIR is not None
+    assert config.CONFIG_PATH is not None
+    assert config.MEDIA_PATH is not None
 
-    def test_internet_connection(self):
-        import requests
-        google = 'https://www.google.com/'
-        try:
-            requests.get(google)
-        except Exception as e:
-            print(e)
-            self.fail('check internet connection')
+    assert config.SECRET_KEY is not None
 
-    def test_database_existing(self):
-        pass
+    assert config.DB_PATH is not None
+    assert config.DB_DRIVER is not None
+    assert config.DB_NAME is not None
+    assert config.DATABASE_URL is not None
+    assert config.DATABASE_TEST_URL is not None
+    assert config.DB_TEST_NAME is not None
+
+    assert config.JW_TOKEN_MINUTES_LIVE is not None
+
+    assert config.DATABASE_TEST_URL != config.DATABASE_URL, "DATABASE_TEST_URL must have another path "
+
+
+@pytest.mark.internet
+def test_internet_connection():
+    import requests
+    google = 'https://www.google.com/'
+    try:
+
+        response = requests.get(google)
+        assert response.status_code == 200, "check internet connection"
+    except Exception as e:
+        print(e)
+        assert False, "check internet connection"

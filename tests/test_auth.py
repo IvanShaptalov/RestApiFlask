@@ -1,13 +1,7 @@
-import json
-
-import config.routes
-from tests.conftest import BaseTestCase
+import pytest
 
 
-class ConfigTestCase(BaseTestCase):
-    def test_registration_get_valid(self):
-        app = self.create_app()
-
-        response = app.test_client().post(config.routes.REGISTER, json=dict(name='ivan', password='dafsjkd111'))
-        print(response)
-        assert (response.status_code == 200)
+@pytest.mark.auth
+def test_index_html(client):
+    response = client.get('/')
+    assert response.status_code == 200, "index don`t work correctly"
