@@ -6,13 +6,14 @@ import pytest
 import config.config
 from app.api import create_app
 from app.models import db_util
+from config import routes
 
 
 @pytest.fixture
 def app():
-    """Create and configure a new app instance for each test."""
-    # create a temporary file to isolate the database for each test
-    # create the app with common test config
+    """Create and configure a new app instance for each """
+    # create a temporary file to isolate the database for each
+    # create the app with common testing config
     print('fixture working?')
     app = create_app(test_config={"TESTING": True, "DATABASE": config.config.DATABASE_TEST_URL})
     assert db_util.Base is not None
@@ -22,7 +23,7 @@ def app():
 
 @pytest.fixture
 def client(app):
-    """A test client for the app."""
+    """A testing client for the app."""
     return app.test_client()
 
 
@@ -82,6 +83,98 @@ def delete_aliases_caller():
     return _delete_aliases
 
 
+@pytest.fixture
+def number_list_invalid():
+    return ['hfj',
+            'fsgd23232',
+            '32498gsdgfji',
+            'sgjfJHOIFGS',
+            '-132,,123']
+
+
+@pytest.fixture
+def number_list_valid():
+    return ['1233',
+            '213.123',
+            '12498.123',
+            '-123.1',
+            '-0',
+            '-1',
+            '001'
+            ]
+
+
+@pytest.fixture
+def number_list_above_zero():
+    return [1, 2, 3, 4, 5, 6, 7, 8, 8, 9, 10]
+
+
+@pytest.fixture
+def number_list_below_zero():
+    return [-1, -2, -3, -4 - 5, -6, -6 - 7, -9, -10000]
+
+
 def _delete_aliases():
     db_util.Base.metadata.drop_all(db_util.engine)
     logging.info('delete aliases')
+
+
+@pytest.fixture
+def token(client, registration_data):
+    login_response = None
+    # noinspection PyBroadException
+    try:
+        # create user
+        response = client.post(routes.AUTH_PREFIX + routes.REGISTER, json=registration_data)
+        if len(response.headers) > 0:
+            print(response.headers[0])
+        assert response.status_code == 201, "expected 201, user creating"
+
+        login_response = client.post(routes.AUTH_PREFIX + routes.LOGIN, headers=login_headers())
+        print(response)
+        assert login_response.status_code == 200, "login don't work correctly"
+    finally:
+        if login_response is not None:
+            data = login_response.get_json()
+            return data['token']
+
+
+@pytest.fixture
+def product_valid():
+    return {"article": "3249uef123ho3weih32f23rijfjoes76789",
+            "name": "apples"}
+
+
+@pytest.fixture
+def products_invalid():
+    very_big_name = "apples" * 1000
+    very_big_article = "article" * 1000
+    return [{"article": "",
+             "name": ""},
+            {"name": "apples"},
+            {"article": very_big_article,
+             "name": very_big_name}]
+
+
+@pytest.fixture
+def valid_pricelist():
+    return [{"currency": "usd", "count": 390},
+            {"currency": "uah", "count": 2000},
+            {"currency": "uah1", "count": "200"},
+            {"currency": "uah2", "count": "20.10"},
+            {"currency": "ru", "count": 20.1234}]
+
+
+@pytest.fixture
+def invalid_pricelist():
+    return [{"currency": "usd", "count": -3 - 90},
+            {"currency": "uah", "count": -2000},
+            {"currency": "uah", "count": "hello"},
+            {"currency": "uah", "count": "200, maybe ok?"},
+            {"currency": "ru", "count": -20}]
+
+
+@pytest.fixture
+def pricelist_unique_failed():
+    return [{"currency": "uah", "count": 2000},
+            {"currency": "uah", "count": 20.1234}]

@@ -16,7 +16,7 @@ def create_app(test_config=None):
         DATABASE=DATABASE_URL,
     )
 
-    # load the test config if passed in
+    # load the config if passed in
     ic(test_config)
     if test_config:
         print('test')
@@ -45,5 +45,6 @@ def create_app(test_config=None):
 
     app.register_blueprint(auth.bp)
     app.register_blueprint(products.bp)
+    app.register_blueprint(currency.bp)
 
     return app

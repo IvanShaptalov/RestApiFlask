@@ -39,6 +39,7 @@ def init_db():
 
     # import tables from models
     from app import models
+    print(f'imported module: {models}')
 
     base.metadata.create_all(bind=engine)
 
@@ -233,16 +234,16 @@ def get_by_max(session, table_class, column):
     return row
 
 
-def check_unique_value_in_table(session, table_class, identifier_to_value: list):
+def check_unique_value_in_table(session_p, table_class, identifier_to_value: list):
     """
     check unique in table
     :param table_class: sqlalchemy model,
-    :param session: session must using via statement WITH
+    :param session_p: session must using via statement WITH
     :param identifier_to_value: instrumented attribute to value, example [User.id == 5, User.name = 'abc']
     :return: True if object exists in table
     """
     # if username empty
-    obj = session.query(table_class).filter(*identifier_to_value).first()
+    obj = session_p.query(table_class).filter(*identifier_to_value).first()
     return obj is not None
 # endregion
 

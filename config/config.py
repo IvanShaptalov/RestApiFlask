@@ -19,7 +19,7 @@ DB_DRIVER = os.environ.get('DB_DRIVER') or config['DATABASE']['DRIVER']
 DB_NAME = os.environ.get('DATABASE_URL') or config['DATABASE']['URL']
 DATABASE_URL = "{}{}{}".format(DB_DRIVER, DB_PATH, DB_NAME)
 
-# test database
+# database to testing
 DB_TEST_NAME = os.environ.get('DATABASE_TEST_URL') or config['DATABASE']['TEST_URL']
 DATABASE_TEST_URL = "{}{}".format(DB_DRIVER, DB_TEST_NAME)
 

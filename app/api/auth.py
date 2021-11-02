@@ -11,7 +11,7 @@ from app.filters import filter
 bp = Blueprint('register', __name__, url_prefix='/auth')
 
 
-@bp.route(config.routes.REGISTER, methods=['POST'])
+@bp.post(config.routes.REGISTER)
 @filter.data_exists(key_list=['name', 'password'])
 def signup_user():
     data = request.get_json()
@@ -46,7 +46,7 @@ def signup_user():
                          {'WWW.Authentication': 'register successful'})
 
 
-@bp.route(config.routes.LOGIN, methods=['POST'])
+@bp.post(config.routes.LOGIN)
 def login_user():
     auth = request.authorization
 

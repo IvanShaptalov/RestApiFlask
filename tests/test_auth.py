@@ -3,7 +3,7 @@ from config import routes
 from tests.conftest import login_headers
 
 
-# region index test
+# region index testing
 
 @pytest.mark.auth
 def test_index_html(client):
@@ -11,12 +11,12 @@ def test_index_html(client):
     assert response.status_code == 200, "index don`t work correctly"
 
 
-# endregion index test
+# endregion index testing
 
 # region registration tests
 @pytest.mark.auth
 def test_registration_valid(client, registration_data, delete_aliases_caller):
-    """test registration in valid case, expected 201"""
+    """testing registration in valid case, expected 201"""
     try:
         response = client.post(routes.AUTH_PREFIX + routes.REGISTER, json=registration_data)
         if len(response.headers) > 0:
@@ -28,7 +28,7 @@ def test_registration_valid(client, registration_data, delete_aliases_caller):
 
 @pytest.mark.auth
 def test_user_unique_in_registration(client, registration_data, delete_aliases_caller):
-    """test user unique while registration"""
+    """testing user unique while registration"""
     try:
         response1 = client.post(routes.AUTH_PREFIX + routes.REGISTER, json=registration_data)
         response2 = client.post(routes.AUTH_PREFIX + routes.REGISTER, json=registration_data)
@@ -88,20 +88,6 @@ def test_name_invalid(client, r_data_name_invalid, delete_aliases_caller):
 # endregion registration tests
 
 # region login tests
-@pytest.mark.auth
-def test_login(client, registration_data, delete_aliases_caller):
-    try:
-        # create user
-        response = client.post(routes.AUTH_PREFIX + routes.REGISTER, json=registration_data)
-        if len(response.headers) > 0:
-            print(response.headers[0])
-        assert response.status_code == 201, "expected 201, user creating"
-
-        response = client.post(routes.AUTH_PREFIX + routes.LOGIN, headers=login_headers())
-        print(response)
-        assert response.status_code == 200, "login don't work correctly"
-    finally:
-        delete_aliases_caller()
 
 
 @pytest.mark.auth

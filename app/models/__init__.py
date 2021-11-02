@@ -24,7 +24,6 @@ class User(Base):
 class Product(Base):
     __tablename__ = "product"
     id = Column('id', Integer, primary_key=True, index=True, autoincrement='auto')
-    # todo how make article unique to each other but other in current user?
     name = Column('name', String(validation_config.MAX_NAME_LENGTH))
     article = Column('article', String(validation_config.MAX_ARTICLE_LENGTH))
     user_id = Column('user_id', Integer, ForeignKey('user.id'))
