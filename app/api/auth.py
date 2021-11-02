@@ -1,5 +1,6 @@
 import config.config
 from app import models
+from app.filters.filter import user_filter
 from app.models import User, db_util
 from flask import request, jsonify, make_response, Blueprint
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -16,25 +17,9 @@ bp = Blueprint('register', __name__, url_prefix='/auth')
 def signup_user():
     data = request.get_json()
 
-    # region filtering
-    min_l = config.validation_config.MIN_NAME_LENGTH
-    max_l = config.validation_config.MAX_NAME_LENGTH
-
-    if not filter.check_args_length(data['name'], min_len=min_l, max_len=max_l):
-        return make_response('bad request', 400,
-                             {'Validation error': f'username at least {min_l} characters'})
-
-    if db_util.check_unique_value_in_table(db_util.sc_session,
-                                           table_class=User,
-                                           identifier_to_value=[User.username == data['name']]):
-        return make_response('bad request', 400,
-                             {'Unique error': 'user with current name already exist'})
-
-    if not filter.check_password_validity(data['password']):
-        return make_response('bad request', 400,
-                             {'Security warning': 'weak password'})
-    # endregion filtering
-
+    filter_result = user_filter(data)
+    if filter_result is not None:
+        return filter_result
     hashed_password = generate_password_hash(data['password'], method='sha256')
 
     db_util.write_obj_to_table(session_p=db_util.sc_session,

@@ -4,7 +4,7 @@ from functools import wraps
 
 from app import models
 from app.models import db_util
-from app.utils import response_util
+from app.utils import resp_shortcut
 
 
 def token_required(func):
@@ -16,14 +16,14 @@ def token_required(func):
             token = request.headers['x-access-tokens']
 
         if not token:
-            return response_util(code=400, message='Bad request', desc='a valid token is missing')
+            return resp_shortcut(code=400, message='Bad request', desc='a valid token is missing')
 
         try:
             payload = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
             current_user = db_util.sc_session.query(models.User).filter_by(public_id=payload['public_id']).first()
         except Exception as e:
             print(type(e), e)
-            return response_util(code=401, message='Unauthorized', desc='token is invalid or expired')
+            return resp_shortcut(code=401, message='Unauthorized', desc='token is invalid or expired')
         return func(current_user, *args, **kwargs)
 
     return decorator
@@ -37,7 +37,7 @@ def product_required(func):
             article = request.headers['product-article']
 
         if not article:
-            return response_util(code=400, message='Bad request', desc='product article is missing')
+            return resp_shortcut(code=400, message='Bad request', desc='product article is missing')
 
         try:
             product = db_util.get_from_db_multiple_filter(open_session=db_util.sc_session,
@@ -47,7 +47,7 @@ def product_required(func):
                                                               models.Product.article == article])
         except Exception as e:
             print(type(e), e)
-            return response_util(code=400, message='Bad request', desc='product with article not exists')
+            return resp_shortcut(code=400, message='Bad request', desc='product with article not exists')
         return func(product, *args, **kwargs)
 
     return decorator

@@ -120,7 +120,7 @@ def _delete_aliases():
 
 
 @pytest.fixture
-def token(client, registration_data):
+def token(client, registration_data, delete_aliases_caller):
     login_response = None
     # noinspection PyBroadException
     try:
@@ -133,6 +133,8 @@ def token(client, registration_data):
         login_response = client.post(routes.AUTH_PREFIX + routes.LOGIN, headers=login_headers())
         print(response)
         assert login_response.status_code == 200, "login don't work correctly"
+    except:
+        delete_aliases_caller()
     finally:
         if login_response is not None:
             data = login_response.get_json()
@@ -178,3 +180,8 @@ def invalid_pricelist():
 def pricelist_unique_failed():
     return [{"currency": "uah", "count": 2000},
             {"currency": "uah", "count": 20.1234}]
+
+
+@pytest.fixture
+def change_username():
+    return {"name": "new_test_username"}

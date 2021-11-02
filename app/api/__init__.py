@@ -8,12 +8,15 @@ from flask import Flask
 
 def create_app(test_config=None):
     """Create and configure an instance of the Flask application."""
-    app = Flask(__name__, instance_relative_config=True, root_path=config.config.BASE_DIR)
+
+    app = Flask(config.config.APPLICATION_PATH, instance_relative_config=True)
     app.config.from_mapping(
         # a default secret that should be overridden by instance config
         SECRET_KEY=SECRET_KEY,
         # store the database in the instance folder
         DATABASE=DATABASE_URL,
+        UPLOAD_FOLDER=config.config.MEDIA_PATH,
+        MAX_CONTEXT_LENGTH=config.validation_config.MAX_CONTENT_LENGTH
     )
 
     # load the config if passed in
@@ -42,9 +45,11 @@ def create_app(test_config=None):
     from . import products
     from . import auth
     from . import currency
+    from . import profile
 
     app.register_blueprint(auth.bp)
     app.register_blueprint(products.bp)
     app.register_blueprint(currency.bp)
+    app.register_blueprint(profile.bp)
 
     return app

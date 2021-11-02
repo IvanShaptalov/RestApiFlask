@@ -7,3 +7,8 @@ LOGIN = '/login'
 PRODUCT_PREFIX = '/products'
 
 PRICE_PREFIX = '/price'
+
+PROFILE_PREFIX = '/profile'
+IMAGE = '/image'
+USERNAME = '/name'
+

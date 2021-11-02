@@ -6,6 +6,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 print('config ')
+APPLICATION_PATH = os.path.join(BASE_DIR, "app")
 CONFIG_PATH = os.path.join(BASE_DIR, "config/config.ini")
 MEDIA_PATH = os.path.join(BASE_DIR, "app/media/")
 DB_PATH = "app/models/"

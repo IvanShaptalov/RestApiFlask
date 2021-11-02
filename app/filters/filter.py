@@ -1,9 +1,10 @@
 from functools import wraps
-from flask import request
+from flask import request, make_response
 import re
 
 import config.validation_config
-from app.utils import response_util
+from app.models import db_util, User
+from app.utils import resp_shortcut
 
 
 def data_exists(key_list: list):
@@ -20,10 +21,12 @@ def data_exists(key_list: list):
             data = request.get_json()
             # check if json is dictionary
             if not isinstance(data, dict):
-                return response_util(message='Json warning', desc=f'expected dictionary from json, given: {type(data)}', code=400)
+                return resp_shortcut(message='Json warning', desc=f'expected dictionary from json, given: {type(data)}',
+                                     code=400)
             for key in key_list:
                 if key not in data:
-                    return response_util(message='Arguments missed', desc='expected some of arguments, but not given', code=400)
+                    return resp_shortcut(message='Arguments missed', desc='expected some of arguments, but not given',
+                                         code=400)
             return func(*args, **kwargs)
 
         return wrapper
@@ -89,3 +92,35 @@ def check_is_digit(*args, above_zero: bool = False, below_zero: bool = False):
                     return False
 
     return True
+
+
+def allowed_file(filename):
+    """:return True if given file have valid extension """
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in config.validation_config.ALLOWED_EXTENSIONS
+
+
+def image_exists():
+    """:return True if file exist"""
+    return 'image' in request.files
+
+
+def user_filter(data, password_required=True):
+    # region filtering
+    min_l = config.validation_config.MIN_NAME_LENGTH
+    max_l = config.validation_config.MAX_NAME_LENGTH
+
+    if not check_args_length(data['name'], min_len=min_l, max_len=max_l):
+        return make_response('bad request', 400,
+                             {'Validation error': f'username at least {min_l} characters'})
+
+    if db_util.check_unique_value_in_table(db_util.sc_session,
+                                           table_class=User,
+                                           identifier_to_value=[User.username == data['name']]):
+        return make_response('bad request', 400,
+                             {'Unique error': 'user with current name already exist'})
+    if password_required:
+        if not check_password_validity(data['password']):
+            return make_response('bad request', 400,
+                                 {'Security warning': 'weak password'})
+    # endregion filtering

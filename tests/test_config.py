@@ -7,7 +7,7 @@ def test_configuration():
     assert config.BASE_DIR is not None
     assert config.CONFIG_PATH is not None
     assert config.MEDIA_PATH is not None
-
+    assert config.APPLICATION_PATH is not None
     assert config.SECRET_KEY is not None
 
     assert config.DB_PATH is not None
