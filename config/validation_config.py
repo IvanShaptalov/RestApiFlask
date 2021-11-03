@@ -20,3 +20,5 @@ PASSWORD_PATTERN = r'[A-Za-z0-9@#$%^&+=]{8,' + str(MAX_PASSWORD_LENGTH) + '}'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 MAX_PAGE_SIZE = 50
+
+ALLOWED_SORTING_FIELDS = {'article', 'name'}

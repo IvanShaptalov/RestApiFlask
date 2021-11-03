@@ -19,7 +19,3 @@ def test_product_pagination(client, delete_aliases_caller, pagination_args):
         assert response.status_code == 200, "pagination don't work correctly"
     finally:
         delete_aliases_caller()
-
-# test filtering
-
-# test sorting
