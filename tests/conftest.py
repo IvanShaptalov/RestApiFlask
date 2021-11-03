@@ -190,3 +190,14 @@ def change_username():
 @pytest.fixture
 def pagination_args():
     return "?page=4&page_size=1"
+
+
+@pytest.fixture
+def filtering_args():
+    return ["?page=1&page_size=3&sort_by=article&name=potato&article=123",
+            "?page=1&page_size=3&sort_by=article&name=potato&article=",
+            "?page=1&page_size=3&sort_by=article&name=&article=123",
+            "?page=1&page_size=3&name=potato&article=123",
+            "?page=1&sort_by=article&name=potato&article=123",
+            "?article=123"]
+

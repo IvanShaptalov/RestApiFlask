@@ -19,3 +19,13 @@ def test_product_pagination(client, delete_aliases_caller, pagination_args):
         assert response.status_code == 200, "pagination don't work correctly"
     finally:
         delete_aliases_caller()
+
+
+@pytest.mark.products
+def test_product_list_filter(client, delete_aliases_caller, filtering_args):
+    try:
+        for arg in filtering_args:
+            response = client.get(config.routes.PRODUCT_PREFIX + arg)
+            assert response.status_code == 200, "pagination don't work correctly"
+    finally:
+        delete_aliases_caller()
