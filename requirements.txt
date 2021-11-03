@@ -1,3 +1,4 @@
+apispec==5.1.1
 asttokens==2.0.5
 attrs==21.2.0
 certifi==2021.10.8
@@ -8,6 +9,8 @@ coverage==6.1.1
 dataclasses==0.8
 executing==0.8.2
 Flask==2.0.2
+flask-rest-api==0.17.1
+Flask-REST-JSONAPI==0.31.2
 greenlet==1.1.2
 icecream==2.1.1
 idna==3.3
@@ -16,6 +19,8 @@ iniconfig==1.1.1
 itsdangerous==2.0.1
 Jinja2==3.0.2
 MarkupSafe==2.0.1
+marshmallow==3.14.0
+marshmallow-jsonapi==0.24.0
 packaging==21.2
 pluggy==1.0.0
 py==1.10.0
@@ -29,5 +34,6 @@ SQLAlchemy==1.4.26
 toml==0.10.2
 typing-extensions==3.10.0.2
 urllib3==1.26.7
+webargs==5.4.0
 Werkzeug==2.0.2
 zipp==3.6.0

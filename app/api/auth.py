@@ -1,8 +1,9 @@
+import app.utils
 import config.config
 from app import models
 from app.filters.filter import user_filter
 from app.models import User, db_util
-from flask import request, jsonify, make_response, Blueprint
+from flask import request, jsonify, Blueprint
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 import jwt
@@ -27,8 +28,7 @@ def signup_user():
                                public_id=str(uuid.uuid4()),
                                username=data['name'],
                                password=hashed_password)
-    return make_response('registered', 201,
-                         {'WWW.Authentication': 'register successful'})
+    return app.utils.resp_shortcut(message='WWW.Authentication', desc='register successful', code=201)
 
 
 @bp.post(config.routes.LOGIN)
@@ -37,12 +37,15 @@ def login_user():
 
     # region filtering
     if not auth or not auth.username or not auth.password:
-        return make_response('could not verify', 401, {'WWW.Authentication': 'Basic realm: "login required"'})
+        return app.utils.resp_shortcut(message='WWW.Authentication Basic realm',
+                                       desc='login required',
+                                       code=401)
 
     user = db_util.sc_session.query(User).filter_by(username=auth.username).first()
     if user is None:
-        return make_response('could not verify', 401,
-                             {'WWW.Authentication': 'Basic realm: "invalid login or password"'})
+        return app.utils.resp_shortcut(message='WWW.Authentication Basic realm',
+                                       desc='invalid login or password',
+                                       code=401)
     # endregion
     if check_password_hash(user.password, auth.password):
         token_live = config.config.JW_TOKEN_MINUTES_LIVE
@@ -52,7 +55,9 @@ def login_user():
                            config.config.SECRET_KEY, algorithm="HS256")
 
         return jsonify({'token': token})
-    return make_response('could not verify', 401, {'WWW.Authentication': 'Basic realm: "login required"'})
+    return app.utils.resp_shortcut(message='WWW.Authentication Basic realm',
+                                   desc='login required',
+                                   code=401)
 
 
 print('auth bind')

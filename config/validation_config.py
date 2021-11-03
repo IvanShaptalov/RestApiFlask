@@ -18,3 +18,5 @@ MAX_CONTENT_LENGTH = 5 * 1000 * 1000  # 5 mb
 PASSWORD_PATTERN = r'[A-Za-z0-9@#$%^&+=]{8,' + str(MAX_PASSWORD_LENGTH) + '}'
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+
+MAX_PAGE_SIZE = 50

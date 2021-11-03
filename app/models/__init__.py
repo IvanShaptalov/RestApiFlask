@@ -36,3 +36,5 @@ class Price(Base):
     currency = Column('currency', String(validation_config.MAX_CURRENCY_LENGTH))
     count = Column('count', BigInteger)
     product_id = Column('product_id', Integer, ForeignKey('product.id'))
+
+

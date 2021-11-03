@@ -16,7 +16,8 @@ def create_app(test_config=None):
         # store the database in the instance folder
         DATABASE=DATABASE_URL,
         UPLOAD_FOLDER=config.config.MEDIA_PATH,
-        MAX_CONTEXT_LENGTH=config.validation_config.MAX_CONTENT_LENGTH
+        MAX_CONTEXT_LENGTH=config.validation_config.MAX_CONTENT_LENGTH,
+        OPENAPI_VERSION='3.0.2',
     )
 
     # load the config if passed in

@@ -1,11 +1,16 @@
 import config.validation_config
-from app.models import Product, User, db_util, Price
+from app.models import Product, User, db_util
 from app.security.token_provider import token_required
-from flask import request, make_response, Blueprint, jsonify
+from flask import request
+from flask_rest_api import Blueprint
 
 from app.filters import filter
+from app.utils import resp_shortcut
 
 bp = Blueprint('product', __name__, url_prefix=config.routes.PRODUCT_PREFIX)
+from app.api import product_list
+
+print(f'import module {product_list}')
 
 
 @bp.post('')
@@ -17,13 +22,16 @@ def create_product(current_user: User):
                                            table_class=Product,
                                            identifier_to_value=[Product.user_id == current_user.id,
                                                                 Product.article == data['article']]):
-        return make_response('bad request', 400,
-                             {'Unique error': 'current product already exist'})
+
+        return resp_shortcut(message='Bad request',
+                             desc='current product already exist',
+                             code=400)
     if not filter.check_args_length(data['article'],
                                     min_len=config.validation_config.MIN_ARTICLE_LENGTH,
                                     max_len=config.validation_config.MAX_ARTICLE_LENGTH):
-        return make_response('bad request', 400,
-                             {'Unique error': 'bad article length'})
+        return resp_shortcut(message='Bad request',
+                             desc='invalid article',
+                             code=400)
 
     new_product = Product(article=data['article'],
                           name=data['name'],
@@ -35,35 +43,6 @@ def create_product(current_user: User):
                                article=data['article'],
                                user_id=current_user.id)
 
-    return make_response('created', 201,
-                         {'Created': 'product created'})
-
-
-@bp.get('')
-@token_required
-def get_products(current_user):
-    products = db_util.get_from_db_multiple_filter(open_session=db_util.sc_session,
-                                                   table_class=Product,
-                                                   identifier_to_value=[Product.user_id == current_user.id],
-                                                   get_type='many')
-    output = []
-    for product in products:
-        assert isinstance(product, Product)
-        # create pricelist
-        pricelist = []
-        for price in product.pricelist:
-            assert isinstance(price, Price)
-            price_data = {
-                'currency': price.currency,
-                'count': price.count
-            }
-            pricelist.append(price_data)
-        # create product
-        product_data = {'article': product.article,
-                        'name': product.name,
-                        'pricelist': pricelist}
-        output.append(product_data)
-    return jsonify({'list_of_products': output})
-
-
-print('product bind')
+    return resp_shortcut(message='Created',
+                         desc='product created',
+                         code=201)

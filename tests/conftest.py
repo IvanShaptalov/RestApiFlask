@@ -185,3 +185,8 @@ def pricelist_unique_failed():
 @pytest.fixture
 def change_username():
     return {"name": "new_test_username"}
+
+
+@pytest.fixture
+def pagination_args():
+    return "?page=4&page_size=1"

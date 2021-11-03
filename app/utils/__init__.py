@@ -1,12 +1,11 @@
 from datetime import datetime
 
-from flask import make_response
+from flask import jsonify
 from os.path import splitext
 
 
 def resp_shortcut(message, desc, code):
-    return make_response(message, code,
-                         {'description': desc})
+    return jsonify({'message': message, 'desc': desc}), code
 
 
 def get_timestamp_path(filename):

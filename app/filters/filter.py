@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import request, make_response
+from flask import request
 import re
 
 import config.validation_config
@@ -111,16 +111,19 @@ def user_filter(data, password_required=True):
     max_l = config.validation_config.MAX_NAME_LENGTH
 
     if not check_args_length(data['name'], min_len=min_l, max_len=max_l):
-        return make_response('bad request', 400,
-                             {'Validation error': f'username at least {min_l} characters'})
+        return resp_shortcut(message='Bad request',
+                             desc=f'username at least {min_l} characters',
+                             code=400)
 
     if db_util.check_unique_value_in_table(db_util.sc_session,
                                            table_class=User,
                                            identifier_to_value=[User.username == data['name']]):
-        return make_response('bad request', 400,
-                             {'Unique error': 'user with current name already exist'})
+        return resp_shortcut(message='Bad request',
+                             desc='user with current name already exist',
+                             code=400)
     if password_required:
         if not check_password_validity(data['password']):
-            return make_response('bad request', 400,
-                                 {'Security warning': 'weak password'})
+            return resp_shortcut(message='Bad request',
+                                 desc='weak password',
+                                 code=400)
     # endregion filtering

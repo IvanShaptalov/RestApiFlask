@@ -7,14 +7,13 @@ from app import utils
 from app.filters.filter import user_filter
 from app.models import User, db_util
 from app.security.token_provider import token_required
-from flask import request, make_response, Blueprint, send_file
+from flask import request, Blueprint, send_file
 from app.filters import filter
 from app.utils import resp_shortcut
 
 bp = Blueprint('profile', __name__, url_prefix=config.routes.PROFILE_PREFIX)
 
 
-# todo create user
 @bp.post(config.routes.IMAGE)
 @token_required
 def upload_image(current_user: User):
@@ -72,6 +71,8 @@ def change_username(current_user: User):
                               table_class=User,
                               identifier_to_value=[User.id == current_user.id],
                               username=data['name'])
-    return make_response('registered', 201,
-                         {'WWW.Authentication': 'register successful'})
+
+    return resp_shortcut(message='WWW.Authentication',
+                         desc='register successful',
+                         code=201)
 # endregion
