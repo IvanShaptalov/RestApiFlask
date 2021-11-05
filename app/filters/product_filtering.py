@@ -46,6 +46,7 @@ def get_products(sorting_rule: dict = None, filtering_rule: dict = None):
             name = filtering_rule.get('name') or None
             article = filtering_rule.get('article') or None
             if name:
+                # noinspection PyUnresolvedReferences
                 conditions.append(Product.name.contains(name))
             if article:
                 conditions.append(Product.article == article)

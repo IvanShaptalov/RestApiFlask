@@ -21,7 +21,7 @@ def data_exists(key_list: list):
             data = request.get_json()
             # check if json is dictionary
             if not isinstance(data, dict):
-                return resp_shortcut(message='Json warning', desc=f'expected dictionary from json, given: {type(data)}',
+                return resp_shortcut(message='Bad request', desc=f'expected dictionary from json, given: {type(data)}',
                                      code=400)
             for key in key_list:
                 if key not in data:

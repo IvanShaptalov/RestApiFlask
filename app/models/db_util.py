@@ -21,8 +21,7 @@ def get_db() -> DeclarativeMeta:
     is unique for each request and will be reused if this is called
     again.
     """
-    engine = create_engine(current_app.config['DATABASE'],
-                           connect_args={"check_same_thread": False})
+    engine = create_engine(current_app.config['DATABASE'])
     sc_session = scoped_session(sessionmaker(autocommit=False,
                                              autoflush=False,
                                              bind=engine))
@@ -42,11 +41,11 @@ def init_db():
     print(f'imported module: {models}')
 
     base.metadata.create_all(bind=engine)
+    print('database created')
 
 
 def init_db_command():
     click.echo("Database initializing...")
-
     init_db()
     click.echo("Initialized the database.")
 

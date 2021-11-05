@@ -1,7 +1,8 @@
 from icecream import ic
 
 import config.config
-from config.config import SECRET_KEY, DATABASE_URL
+from config.config import SECRET_KEY
+from config.db_config import DATABASE_URL
 import os
 from flask import Flask
 

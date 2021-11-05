@@ -10,7 +10,7 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = "user"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    public_id = Column(Integer)
+    public_id = Column(String(validation_config.MAX_PUBLIC_ID_LENGTH))
     username = Column(String(validation_config.MAX_NAME_LENGTH), unique=True)
     password = Column(String(validation_config.MAX_PASSWORD_LENGTH), unique=False)
     avatar_path = Column(String(validation_config.MAX_AVATAR_PATH_LENGTH), unique=False)

@@ -15,7 +15,7 @@ def app():
     # create a temporary file to isolate the database for each
     # create the app with common testing config
     print('fixture working?')
-    app = create_app(test_config={"TESTING": True, "DATABASE": config.config.DATABASE_TEST_URL})
+    app = create_app(test_config={"TESTING": True, "DATABASE": config.db_config.DATABASE_TEST_URL})
     assert db_util.Base is not None
     assert db_util.engine is not None
     return app

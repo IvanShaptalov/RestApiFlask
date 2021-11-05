@@ -9,17 +9,14 @@ def test_configuration():
     assert config.MEDIA_PATH is not None
     assert config.APPLICATION_PATH is not None
     assert config.SECRET_KEY is not None
-
-    assert config.DB_PATH is not None
-    assert config.DB_DRIVER is not None
-    assert config.DB_NAME is not None
-    assert config.DATABASE_URL is not None
-    assert config.DATABASE_TEST_URL is not None
-    assert config.DB_TEST_NAME is not None
-
     assert config.JW_TOKEN_MINUTES_LIVE is not None
 
-    assert config.DATABASE_TEST_URL != config.DATABASE_URL, "DATABASE_TEST_URL must have another path "
+
+@pytest.mark.config
+def test_db_configuration():
+    from config import db_config
+    assert db_config.DB_PATH is not None
+    assert db_config.DATABASE_URL != db_config.DATABASE_TEST_URL, "DATABASE_TEST_URL must have another path "
 
 
 @pytest.mark.internet
