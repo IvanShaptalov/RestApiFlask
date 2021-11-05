@@ -22,9 +22,8 @@ def get_db() -> DeclarativeMeta:
     again.
     """
     engine = create_engine(current_app.config['DATABASE'])
-    sc_session = scoped_session(sessionmaker(autocommit=False,
-                                             autoflush=False,
-                                             bind=engine))
+    Session = sessionmaker(bind=engine)
+    sc_session = Session()
     assert sc_session is not None, "db session is not created"
 
     return Base, engine, sc_session

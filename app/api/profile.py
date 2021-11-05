@@ -40,11 +40,12 @@ def upload_image(current_user: User):
                 print('file removed')
             except OSError:
                 pass
-        db_util.edit_obj_in_table(session_p=db_util.sc_session,
-                                  table_class=User,
-                                  identifier_to_value=[User.id == current_user.id],
-                                  avatar_path=filename)
-        return resp_shortcut(message='created', code=201, desc='image uploaded')
+        with db_util.sc_session as session:
+            db_util.edit_obj_in_table(session_p=session,
+                                      table_class=User,
+                                      identifier_to_value=[User.id == current_user.id],
+                                      avatar_path=filename)
+            return resp_shortcut(message='created', code=201, desc='image uploaded')
     return resp_shortcut(message='bad request', code=400, desc='image not valid')
 
 
@@ -66,11 +67,11 @@ def change_username(current_user: User):
     filter_result = user_filter(data=data, password_required=False)
     if filter_result is not None:
         return filter_result
-
-    db_util.edit_obj_in_table(session_p=db_util.sc_session,
-                              table_class=User,
-                              identifier_to_value=[User.id == current_user.id],
-                              username=data['name'])
+    with db_util.sc_session as session:
+        db_util.edit_obj_in_table(session_p=session,
+                                  table_class=User,
+                                  identifier_to_value=[User.id == current_user.id],
+                                  username=data['name'])
 
     return resp_shortcut(message='WWW.Authentication',
                          desc='register successful',

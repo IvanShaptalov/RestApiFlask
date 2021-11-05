@@ -114,13 +114,13 @@ def user_filter(data, password_required=True):
         return resp_shortcut(message='Bad request',
                              desc=f'username at least {min_l} characters',
                              code=400)
-
-    if db_util.check_unique_value_in_table(db_util.sc_session,
-                                           table_class=User,
-                                           identifier_to_value=[User.username == data['name']]):
-        return resp_shortcut(message='Bad request',
-                             desc='user with current name already exist',
-                             code=400)
+    with db_util.sc_session as session:
+        if db_util.check_unique_value_in_table(session,
+                                               table_class=User,
+                                               identifier_to_value=[User.username == data['name']]):
+            return resp_shortcut(message='Bad request',
+                                 desc='user with current name already exist',
+                                 code=400)
     if password_required:
         if not check_password_validity(data['password']):
             return resp_shortcut(message='Bad request',

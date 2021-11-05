@@ -18,31 +18,33 @@ print(f'import module {product_list}')
 @filter.data_exists(['article', 'name'])
 def create_product(current_user: User):
     data = request.get_json()
-    if db_util.check_unique_value_in_table(session_p=db_util.sc_session,
-                                           table_class=Product,
-                                           identifier_to_value=[Product.user_id == current_user.id,
-                                                                Product.article == data['article']]):
+    with db_util.sc_session as session:
 
-        return resp_shortcut(message='Bad request',
-                             desc='current product already exist',
-                             code=400)
-    if not filter.check_args_length(data['article'],
-                                    min_len=config.validation_config.MIN_ARTICLE_LENGTH,
-                                    max_len=config.validation_config.MAX_ARTICLE_LENGTH):
-        return resp_shortcut(message='Bad request',
-                             desc='invalid article',
-                             code=400)
+        if db_util.check_unique_value_in_table(session_p=session,
+                                               table_class=Product,
+                                               identifier_to_value=[Product.user_id == current_user.id,
+                                                                    Product.article == data['article']]):
 
-    new_product = Product(article=data['article'],
-                          name=data['name'],
-                          user_id=current_user.id)
-    db_util.write_obj_to_table(session_p=db_util.sc_session,
-                               table_class=Product,
-                               identifier_to_value=[Product.article == data['article']],
-                               name=data['name'],
-                               article=data['article'],
-                               user_id=current_user.id)
+            return resp_shortcut(message='Bad request',
+                                 desc='current product already exist',
+                                 code=400)
+        if not filter.check_args_length(data['article'],
+                                        min_len=config.validation_config.MIN_ARTICLE_LENGTH,
+                                        max_len=config.validation_config.MAX_ARTICLE_LENGTH):
+            return resp_shortcut(message='Bad request',
+                                 desc='invalid article',
+                                 code=400)
 
-    return resp_shortcut(message='Created',
-                         desc='product created',
-                         code=201)
+        new_product = Product(article=data['article'],
+                              name=data['name'],
+                              user_id=current_user.id)
+        db_util.write_obj_to_table(session_p=session,
+                                   table_class=Product,
+                                   identifier_to_value=[Product.article == data['article']],
+                                   name=data['name'],
+                                   article=data['article'],
+                                   user_id=current_user.id)
+
+        return resp_shortcut(message='Created',
+                             desc='product created',
+                             code=201)
