@@ -6,12 +6,13 @@ charset-normalizer==2.0.7
 click==8.0.3
 colorama==0.4.4
 coverage==6.1.1
-dataclasses==0.8
+dataclasses==0.6
 executing==0.8.2
 Flask==2.0.2
 flask-rest-api==0.17.1
 Flask-REST-JSONAPI==0.31.2
 greenlet==1.1.2
+gunicorn==20.1.0
 icecream==2.1.1
 idna==3.3
 importlib-metadata==4.8.1
