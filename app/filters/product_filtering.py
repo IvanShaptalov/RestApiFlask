@@ -26,43 +26,42 @@ def get_filtering_rule(request):
     return None if len(filter_rule) == 0 else filter_rule
 
 
-def get_products(sorting_rule: dict = None, filtering_rule: dict = None):
+def get_products(session, sorting_rule: dict = None, filtering_rule: dict = None):
     """
     get products using rules
     :param sorting_rule: via sorting rule
+    :param session: scoped db session
     :param filtering_rule: via filtering rule
     :return: filtered and sorted products, if required
     """
     products = None
     conditions = []
-    with db_util.sc_session as session:
-        if filtering_rule is None:
-            # pass rules and return all products
+    if filtering_rule is None:
+        # pass rules and return all products
+        products = db_util.get_from_db_multiple_filter(open_session=session,
+                                                       table_class=Product,
+                                                       all_objects=True)
+    else:
+        # filter products
+        if filtering_rule:
+            name = filtering_rule.get('name') or None
+            article = filtering_rule.get('article') or None
+            if name:
+                # noinspection PyUnresolvedReferences
+                conditions.append(Product.name.contains(name))
+            if article:
+                conditions.append(Product.article == article)
             products = db_util.get_from_db_multiple_filter(open_session=session,
                                                            table_class=Product,
-                                                           all_objects=True)
-        else:
-            # filter products
-            if filtering_rule:
-                name = filtering_rule.get('name') or None
-                article = filtering_rule.get('article') or None
-                if name:
-                    # noinspection PyUnresolvedReferences
-                    conditions.append(Product.name.contains(name))
-                if article:
-                    conditions.append(Product.article == article)
+                                                           identifier_to_value=conditions,
+                                                           get_type='many')
+    if sorting_rule:
+        if sorting_rule['sort_by'] == 'name':
+            print('sort by name')
+            products = sorted(products, key=lambda prod: prod.name)
+        elif sorting_rule['sort_by'] == 'article':
+            products = sorted(products, key=lambda prod: prod.article)
+            print('sort by article')
 
-                products = db_util.get_from_db_multiple_filter(open_session=session,
-                                                               table_class=Product,
-                                                               identifier_to_value=conditions,
-                                                               get_type='many')
-        if sorting_rule:
-            if sorting_rule['sort_by'] == 'name':
-                print('sort by name')
-                products = sorted(products, key=lambda prod: prod.name)
-            elif sorting_rule['sort_by'] == 'article':
-                products = sorted(products, key=lambda prod: prod.article)
-                print('sort by article')
-
-            # sort products by name or article
-        return products
+        # sort products by name or article
+    return products
