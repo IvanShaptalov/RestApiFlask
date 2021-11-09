@@ -47,6 +47,8 @@ def product_required(func):
                                                               identifier_to_value=[
                                                                   models.Product.user_id == current_user.id,
                                                                   models.Product.article == article])
+                if product is None:
+                    raise Exception
             except Exception as e:
                 print(type(e), e)
                 return resp_shortcut(code=400, message='Bad request', desc='product with article not exists')
